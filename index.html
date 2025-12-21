@@ -15,7 +15,7 @@
             color: #ffffff;
             font-family: 'Inter', sans-serif;
             margin: 0;
-            overflow: hidden; /* Immersive carousel should not scroll vertically */
+            overflow: hidden;
         }
         .font-serif {
             font-family: 'Playfair Display', serif;
@@ -24,7 +24,6 @@
             background: #ffffff;
             color: #000000;
         }
-        /* Grain texture overlay for a filmic, memory-like look */
         .grain::after {
             content: "";
             position: fixed;
@@ -33,7 +32,7 @@
             width: 300%;
             height: 300%;
             background-image: url("https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Noise_Texture.png");
-            opacity: 0.03;
+            opacity: 0.02;
             pointer-events: none;
             z-index: 100;
             animation: grain 8s steps(10) infinite;
@@ -50,6 +49,19 @@
             80% { transform: translate(3%, 35%); }
             90% { transform: translate(-10%, 10%); }
         }
+        /* Custom scrollbar for PhotoView */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1a1a1a;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333;
+        }
     </style>
 <script type="importmap">
 {
@@ -57,7 +69,6 @@
     "react": "https://esm.sh/react@^19.2.3",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
     "react-router-dom": "https://esm.sh/react-router-dom@^7.11.0",
     "framer-motion": "https://esm.sh/framer-motion@^12.23.26"
   }
@@ -66,6 +77,5 @@
 </head>
 <body class="grain">
     <div id="root"></div>
-    <script type="module" src="./index.tsx"></script>
 </body>
 </html>

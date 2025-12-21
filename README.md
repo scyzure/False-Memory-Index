@@ -1,30 +1,21 @@
 
 # False Memory Index
 
-An immersive, 3D spherical photography portfolio.
+A minimalist, high-fidelity photography portfolio featuring a horizontal gallery and a 3D spherical archive.
 
-## Deployment Guide (GitHub / Vercel / Netlify)
+## Key Features
+- **Zero AI Dependency**: All text and metadata is managed manually.
+- **Offline Capable**: Runs entirely client-side.
+- **Minimal Aesthetic**: Dark theme with film grain and smooth transitions.
+- **Immersive Navigation**: Cursor-driven horizontal scrolling and 3D index view.
 
-Because this project uses **React (TSX)** and **Environment Variables**, you cannot simply open `index.html` in a browser. You must "build" it first.
+## Customization
+To add your own photos and text:
+1. Open `constants.ts`.
+2. Follow the template in the `COLLECTIONS` array.
+3. Replace `url` and `coverUrl` with links to your hosted images.
 
-### 1. Local Development
-1. Install dependencies: `npm install`
-2. Start the dev server: `npm run dev` (or `vite`)
-
-### 2. Building for Production
-To generate the static files for GitHub Pages:
-1. Run `npm run build`.
-2. This will create a `dist/` folder.
-3. Upload the *contents* of the `dist/` folder to your host.
-
-### 3. Handling the API Key (Gemini)
-The app is designed to be **robust**. 
-- If you provide a `GEMINI_API_KEY` in your environment, it will generate AI poetic insights for your photos.
-- If you **don't** provide one, the app detects the missing key and automatically switches to **Offline Mode**, using beautiful pre-written fallback insights. The site will not crash.
-
-## Tech Stack
-- **React 19**
-- **Framer Motion** (3D Transitions)
-- **Tailwind CSS**
-- **Vite** (Build Tool)
-- **Google Gemini API** (Optional AI insights)
+## Deployment
+1. Run `npm run build` to generate the production bundle.
+2. Upload the `dist/` folder to GitHub Pages, Netlify, Vercel, or any static host.
+3. No environment variables are required.

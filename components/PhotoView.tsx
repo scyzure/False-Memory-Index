@@ -1,28 +1,13 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { PHOTOS } from '../constants';
-import { getPoeticInsight } from '../geminiService';
-import { AIInsight } from '../types';
 
 const PhotoView: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const photo = PHOTOS.find(p => p.id === id);
-  const [insight, setInsight] = useState<AIInsight | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (photo) {
-      setLoading(true);
-      getPoeticInsight(photo.url, photo.title, photo.description || "A minimalist photograph.")
-        .then(data => {
-          setInsight(data);
-          setLoading(false);
-        });
-    }
-  }, [photo]);
 
   if (!photo) return null;
 
@@ -62,53 +47,33 @@ const PhotoView: React.FC = () => {
               </p>
             </div>
             <p className="text-sm text-neutral-400 leading-relaxed font-light max-w-md">
-              {photo.description || "This fragment belongs to an ongoing study of ephemeral structures and the persistence of memory within physical spaces."}
+              {photo.description}
             </p>
           </div>
 
           <div className="border-l border-neutral-900 pl-12 space-y-8">
-            <div className="space-y-4">
-              <h4 className="text-[9px] uppercase tracking-[0.4em] text-neutral-600 font-bold italic">AI Critique & Analysis</h4>
-              
-              <AnimatePresence mode="wait">
-                {loading ? (
-                  <motion.div 
-                    key="loading"
-                    initial={{ opacity: 0 }} 
-                    animate={{ opacity: 1 }} 
-                    exit={{ opacity: 0 }}
-                    className="space-y-3"
-                  >
-                    <div className="h-3 w-3/4 bg-neutral-900 animate-pulse rounded-full" />
-                    <div className="h-3 w-1/2 bg-neutral-900 animate-pulse rounded-full" />
-                  </motion.div>
-                ) : (
-                  <motion.div 
-                    key="content"
-                    initial={{ opacity: 0, x: 10 }} 
-                    animate={{ opacity: 1, x: 0 }}
-                    className="space-y-6"
-                  >
-                    <div>
-                      <p className="text-xs text-neutral-300 italic font-serif leading-relaxed">
-                        "{insight?.poeticCaption}"
+            <div className="space-y-6">
+              <div>
+                <h4 className="text-[9px] uppercase tracking-[0.4em] text-neutral-600 font-bold mb-4">Metadata</h4>
+                <div className="grid grid-cols-2 gap-y-4">
+                  <div>
+                    <span className="text-[8px] uppercase tracking-[0.2em] text-neutral-600 block mb-1">Year</span>
+                    <span className="text-[10px] text-neutral-400 uppercase tracking-widest">{photo.year}</span>
+                  </div>
+                  <div>
+                    <span className="text-[8px] uppercase tracking-[0.2em] text-neutral-600 block mb-1">Category</span>
+                    <span className="text-[10px] text-neutral-400 uppercase tracking-widest">{photo.category}</span>
+                  </div>
+                  {photo.technicalDetails && (
+                    <div className="col-span-2">
+                      <span className="text-[8px] uppercase tracking-[0.2em] text-neutral-600 block mb-1">Technical Notes</span>
+                      <p className="text-[10px] text-neutral-500 uppercase tracking-widest">
+                        {photo.technicalDetails}
                       </p>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <span className="text-[8px] uppercase tracking-[0.2em] text-neutral-600 block mb-1">Mood</span>
-                        <span className="text-[10px] text-neutral-400 uppercase tracking-widest">{insight?.mood}</span>
-                      </div>
-                      <div>
-                        <span className="text-[8px] uppercase tracking-[0.2em] text-neutral-600 block mb-1">Composition</span>
-                        <p className="text-[10px] text-neutral-500 leading-normal line-clamp-3">
-                          {insight?.technicalAnalysis}
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -118,7 +83,7 @@ const PhotoView: React.FC = () => {
         onClick={() => navigate(-1)}
         className="fixed bottom-12 left-1/2 -translate-x-1/2 text-[9px] uppercase tracking-[0.4em] text-neutral-600 hover:text-white transition-colors"
       >
-        Return to Sphere
+        Return to Index
       </button>
     </motion.div>
   );

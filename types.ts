@@ -7,17 +7,13 @@ export interface Photo {
   location: string;
   description: string;
   year: string;
+  technicalDetails?: string;
 }
 
 export interface Collection {
   id: string;
   title: string;
   coverUrl: string;
+  description?: string;
   photos: Photo[];
-}
-
-export interface AIInsight {
-  mood: string;
-  poeticCaption: string;
-  technicalAnalysis: string;
 }

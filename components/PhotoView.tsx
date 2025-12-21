@@ -1,0 +1,127 @@
+
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { PHOTOS } from '../constants';
+import { getPoeticInsight } from '../geminiService';
+import { AIInsight } from '../types';
+
+const PhotoView: React.FC = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const photo = PHOTOS.find(p => p.id === id);
+  const [insight, setInsight] = useState<AIInsight | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (photo) {
+      setLoading(true);
+      getPoeticInsight(photo.url, photo.title, photo.description || "A minimalist photograph.")
+        .then(data => {
+          setInsight(data);
+          setLoading(false);
+        });
+    }
+  }, [photo]);
+
+  if (!photo) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8 }}
+      className="fixed inset-0 z-[200] bg-[#050505] overflow-y-auto pt-32 pb-20 px-8"
+    >
+      <div className="max-w-7xl mx-auto">
+        <div 
+          className="relative overflow-hidden mx-auto cursor-zoom-out mb-12"
+          onClick={() => navigate(-1)}
+          style={{
+            maskImage: 'linear-gradient(to bottom, transparent, black 3%, black 97%, transparent), linear-gradient(to right, transparent, black 3%, black 97%, transparent)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 3%, black 97%, transparent), linear-gradient(to right, transparent, black 3%, black 97%, transparent)',
+          }}
+        >
+          <motion.img 
+            initial={{ scale: 1.05, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            src={photo.url} 
+            alt={photo.title} 
+            className="w-full h-auto object-contain max-h-[75vh] mx-auto"
+          />
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-xl uppercase tracking-[0.6em] text-neutral-100 font-medium mb-1">{photo.title}</h2>
+              <p className="text-[10px] uppercase tracking-[0.4em] text-neutral-500">
+                Index Ref: {photo.id} // Location: {photo.location}
+              </p>
+            </div>
+            <p className="text-sm text-neutral-400 leading-relaxed font-light max-w-md">
+              {photo.description || "This fragment belongs to an ongoing study of ephemeral structures and the persistence of memory within physical spaces."}
+            </p>
+          </div>
+
+          <div className="border-l border-neutral-900 pl-12 space-y-8">
+            <div className="space-y-4">
+              <h4 className="text-[9px] uppercase tracking-[0.4em] text-neutral-600 font-bold italic">AI Critique & Analysis</h4>
+              
+              <AnimatePresence mode="wait">
+                {loading ? (
+                  <motion.div 
+                    key="loading"
+                    initial={{ opacity: 0 }} 
+                    animate={{ opacity: 1 }} 
+                    exit={{ opacity: 0 }}
+                    className="space-y-3"
+                  >
+                    <div className="h-3 w-3/4 bg-neutral-900 animate-pulse rounded-full" />
+                    <div className="h-3 w-1/2 bg-neutral-900 animate-pulse rounded-full" />
+                  </motion.div>
+                ) : (
+                  <motion.div 
+                    key="content"
+                    initial={{ opacity: 0, x: 10 }} 
+                    animate={{ opacity: 1, x: 0 }}
+                    className="space-y-6"
+                  >
+                    <div>
+                      <p className="text-xs text-neutral-300 italic font-serif leading-relaxed">
+                        "{insight?.poeticCaption}"
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-[8px] uppercase tracking-[0.2em] text-neutral-600 block mb-1">Mood</span>
+                        <span className="text-[10px] text-neutral-400 uppercase tracking-widest">{insight?.mood}</span>
+                      </div>
+                      <div>
+                        <span className="text-[8px] uppercase tracking-[0.2em] text-neutral-600 block mb-1">Composition</span>
+                        <p className="text-[10px] text-neutral-500 leading-normal line-clamp-3">
+                          {insight?.technicalAnalysis}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button 
+        onClick={() => navigate(-1)}
+        className="fixed bottom-12 left-1/2 -translate-x-1/2 text-[9px] uppercase tracking-[0.4em] text-neutral-600 hover:text-white transition-colors"
+      >
+        Return to Sphere
+      </button>
+    </motion.div>
+  );
+};
+
+export default PhotoView;
